@@ -60,6 +60,7 @@ int main (int argc, char *argv[])
 			close(newsock);
 		}
 	}
+	close(newsock);
 	return 0;
 }
 
@@ -67,25 +68,23 @@ int main (int argc, char *argv[])
 void sendBack(int newsock){
 
 	int nBytes = 0;
-	char message[256];
-	char special[] = "hello\n"; //Added a newline at the because fgets adds one in the client.
-	bzero(message,256);
-	nBytes = read(newsock,message,255);
+	char message[1024];
+	bzero(message,1024);
+	char *reqType = "GET";
+	nBytes = read(newsock,message,1023);
    	if (nBytes < 0) 
-		printf("ERROR reading from socket");
+		printf("ERROR reading from socket");	
 	
-	int check = strcasecmp(special,message);//Eliminate concern for case.
+   	printf("\nHere is the message: %s\n",message);
+   	//nBytes = write(newsock,&message,1024);
 	
-	if (check == 0){
-		printf("Here is the message: %s\n",message);
-		nBytes = write(newsock,"Welcome!",8);
    	if (nBytes < 0) 
 		printf("ERROR writing to socket");
-	}else{
-   		printf("Here is the message: %s\n",message);
-   		nBytes = write(newsock,"Messaged received was: ",23);
-		write(newsock,&message,255);
-   		if (nBytes < 0) 
-			printf("ERROR writing to socket");
-	}
+	bzero(message,1024);
+
+}
+
+void parseAndSendResponse(){
+
+
 }
