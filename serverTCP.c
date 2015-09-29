@@ -81,10 +81,15 @@ void sendBack(int newsock){
    	if (nBytes < 0) 
 		printf("ERROR writing to socket");
 	bzero(message,1024);
-
 }
 
 void parseAndSendResponse(){
-
+	char *reqType = "GET";
+	char request[1024];
+	int correct =strncmp(reqType,(char *)request,3);
+	printf("%/d",correct);
+	if(correct != 0){
+		printf("Request type is not supported");
+	}
 
 }
