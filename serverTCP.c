@@ -13,7 +13,8 @@ Project: Minilab
 Due: 9/16/15
 */
 
-void sendBack();
+void sendBack(int);
+void parseAndSendResponse(int);
 
 int main (int argc, char *argv[])
 {
@@ -24,7 +25,7 @@ int main (int argc, char *argv[])
 	if (argc < 2)
 	{
 		printf("Error, please give a port!\n");
-		exit(1); 
+		exit(1);
 	}
 
 	sock = socket(AF_INET,SOCK_STREAM, 0);
@@ -55,6 +56,7 @@ int main (int argc, char *argv[])
 		if(pid == 0){
 			close(sock);
 			sendBack(newsock);
+			parseAndSendResponse(newsock);
 			exit(0);
 		}else{
 			close(newsock);
@@ -81,10 +83,17 @@ void sendBack(int newsock){
    	if (nBytes < 0) 
 		printf("ERROR writing to socket");
 	bzero(message,1024);
-
 }
 
-void parseAndSendResponse(){
-
+void parseAndSendResponse(int newsock){
+	char *reqType = "GET";
+	char request[1024];
+	int nBytes =0;
+	nBytes = read(newsock,request,1023);
+	int correct =strncmp(reqType,(char *)request,3);
+	printf("%d",correct);
+	if(correct != 0){
+		printf("Request type is not supported");
+	}
 
 }
