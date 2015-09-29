@@ -24,7 +24,7 @@ int main (int argc, char *argv[])
 	if (argc < 2)
 	{
 		printf("Error, please give a port!\n");
-		exit(1);
+		exit(1); 
 	}
 
 	sock = socket(AF_INET,SOCK_STREAM, 0);
