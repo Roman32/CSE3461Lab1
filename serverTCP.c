@@ -14,13 +14,14 @@ Due: 9/16/15
 */
 
 void sendBack(int);
-void parseAndSendResponse(int);
+void parseAndSendResponse(int,char []);
 
 int main (int argc, char *argv[])
 {
 	int sock, newsock,portNum, pid;
 	socklen_t clientLen;
 	struct sockaddr_in server, client;
+	char request[256];
 
 	if (argc < 2)
 	{
@@ -38,8 +39,10 @@ int main (int argc, char *argv[])
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(portNum);
 
-	if(bind(sock, (struct sockaddr *) &server, sizeof(server)) < 0)
+	if(bind(sock, (struct sockaddr *) &server, sizeof(server)) < 0){
 		printf("ERROR binding socket!\n");
+		exit(0);
+	}
 
 	listen(sock,50);
 	clientLen = sizeof(client);
@@ -56,7 +59,6 @@ int main (int argc, char *argv[])
 		if(pid == 0){
 			close(sock);
 			sendBack(newsock);
-			parseAndSendResponse(newsock);
 			exit(0);
 		}else{
 			close(newsock);
@@ -70,28 +72,40 @@ int main (int argc, char *argv[])
 void sendBack(int newsock){
 
 	int nBytes = 0;
-	char message[1024];
-	bzero(message,1024);
-	char *reqType = "GET";
-	nBytes = read(newsock,message,1023);
+	char message[256];
+	bzero(message,256);
+	nBytes = read(newsock,message,255);
    	if (nBytes < 0) 
 		printf("ERROR reading from socket");	
 	
    	printf("\nHere is the message: %s\n",message);
    	//nBytes = write(newsock,&message,1024);
+
+	parseAndSendResponse(newsock,message);
 	
    	if (nBytes < 0) 
 		printf("ERROR writing to socket");
-	bzero(message,1024);
+	bzero(message,256);
 }
 
-void parseAndSendResponse(int newsock){
+void parseAndSendResponse(int newsock,char request[]){
 	char *reqType = "GET";
-	char request[1024];
 	int nBytes =0;
-	nBytes = read(newsock,request,1023);
-	int correct =strncmp(reqType,(char *)request,3);
-	printf("%d",correct);
+	int correct =0;
+	int i =0;
+	char requestCopy[256];
+	char *strArray[10];
+	//Copy of string, in case I need the original
+	strcpy((char *)requestCopy,(char *)request);
+	char *tokens = strtok(requestCopy, " \n \r");
+	//pares the message
+	while(tokens != NULL){
+		strArray[i] = malloc(strlen(tokens)+1);
+		strcpy(strArray[i],tokens);
+		printf("\n%s",strArray[i]);
+		i = i+1;
+		tokens = strtok(NULL, " \n\r");
+	}
 	if(correct != 0){
 		printf("Request type is not supported");
 	}
