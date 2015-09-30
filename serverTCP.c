@@ -116,19 +116,24 @@ void parseAndSendResponse(int newsock,char request[]){
 	int numElements =i;
 	
 	i =0;
+	int check =0;
 	while(i < numElements){		
 		if(strstr(strArray[i],".html") !=NULL || strstr(strArray[i],".jpg") !=NULL || strstr(strArray[i],".gif") !=NULL){
 			if(access("./kitten.jpg", F_OK ) != -1 && strcmp(strArray[i],"/kitten.jpg") ==0 ||
 			 access("./index.html", F_OK ) != -1  && strcmp(strArray[i],"/index.html") ==0)
 			{
     				strcat(responseHTTP," 200 OK");
+				check =1;
 			} else {
    				strcat(responseHTTP," 404 NOT FOUND");
+				check =1;
 			}
-		strcat(responseHTTP,"\r\n");
 		}		
 		i++;
 	}
+	if(check == 0)
+		strcat(responseHTTP, " 404 NOT FOUND");
+	strcat(responseHTTP,"\r\n");
 	strcat(responseHTTP,"Date: ");
 	
 	//strcat(responseHTTP,"\r\n");
@@ -155,7 +160,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	}
 	//strcat(responseHTTP,"\n");
 	strcat(responseHTTP,"\r\n");
-	nBytes = write(newsock,&responseHTTP,5000);
+	//nBytes = write(newsock,&responseHTTP,5000);
 	
 	printf("%s",responseHTTP);
 	printf("data should be here");
