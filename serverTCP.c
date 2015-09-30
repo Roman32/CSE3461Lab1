@@ -160,8 +160,8 @@ void parseAndSendResponse(int newsock,char request[]){
 	}
 	//strcat(responseHTTP,"\n");
 	strcat(responseHTTP,"\r\n");
-	//nBytes = write(newsock,&responseHTTP,5000);
-	
+	nBytes = write(newsock,responseHTTP,100);
+	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
 	printf("data should be here");
 }
