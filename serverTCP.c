@@ -2,6 +2,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/sendfile.h>
 #include <netinet/in.h>
 #include <signal.h>
 #include <sys/wait.h>
@@ -116,8 +117,10 @@ void parseAndSendResponse(int newsock,char request[]){
 	
 	i =0;
 	while(i < numElements){		
-		if(strcmp(strArray[i],"/index.html") ==0){
-			if(access("./index.html", F_OK ) != -1 ){
+		if(strstr(strArray[i],".html") !=NULL || strstr(strArray[i],".jpg") !=NULL || strstr(strArray[i],".gif") !=NULL){
+			if(access("./kitten.jpg", F_OK ) != -1 && strcmp(strArray[i],"/kitten.jpg") ==0 ||
+			 access("./index.html", F_OK ) != -1  && strcmp(strArray[i],"/index.html") ==0)
+			{
     				strcat(responseHTTP," 200 OK");
 			} else {
    				strcat(responseHTTP," 404 NOT FOUND");
@@ -129,5 +132,31 @@ void parseAndSendResponse(int newsock,char request[]){
 	strcat(responseHTTP,"Date: ");
 	
 	//strcat(responseHTTP,"\r\n");
+	time_t currentTime;
+	time(&currentTime);
+	char *time =ctime(&currentTime); //adds a newline
+	strcat(responseHTTP,time);
+	i =0;
+	while(i < numElements){
+		if(strstr(strArray[i],".html") !=NULL){
+			strcat(responseHTTP,"Content-Type: text/html");
+			strcat(responseHTTP,"\r\n");
+			break;
+		}else if(strstr(strArray[i],".jpg")){
+			strcat(responseHTTP,"Content-Type: image/jpeg");
+			strcat(responseHTTP,"\r\n");
+			break;
+		}else if(strstr(strArray[i], ".gif")){
+			strcat(responseHTTP,"Content-Type: image/gif");
+			strcat(responseHTTP,"\r\n");
+			break;	
+		}
+	i++;
+	}
+	//strcat(responseHTTP,"\n");
+	strcat(responseHTTP,"\r\n");
+	nBytes = write(newsock,&responseHTTP,5000);
+	
 	printf("%s",responseHTTP);
+	printf("data should be here");
 }
