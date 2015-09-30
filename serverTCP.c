@@ -98,7 +98,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	int i =0;
 	char requestCopy[1024];
 	char *strArray[100];
-	char responseHTTP[1024];
+	char responseHTTP[5000] ="HTTP/1.1";
 	
 	//FILE *fname = "/index.html";
 	//Copy of string, in case I need the original
@@ -116,11 +116,6 @@ void parseAndSendResponse(int newsock,char request[]){
 	
 	i =0;
 	while(i < numElements){		
-		if(strcmp(strArray[i],"HTTP/1.1")==0){
-			strcat(responseHTTP,"HTTP/1.1");
-			i++;
-		}
-
 		if(strcmp(strArray[i],"/index.html") ==0){
 			if(access("./index.html", F_OK ) != -1 ){
     				strcat(responseHTTP," 200 OK");
@@ -128,10 +123,11 @@ void parseAndSendResponse(int newsock,char request[]){
    				strcat(responseHTTP," 404 NOT FOUND");
 			}
 		strcat(responseHTTP,"\r\n");
-		}
-		
+		}		
 		i++;
 	}
+	strcat(responseHTTP,"Date: ");
+	
 	//strcat(responseHTTP,"\r\n");
 	printf("%s",responseHTTP);
 }
