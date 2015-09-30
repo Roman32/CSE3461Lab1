@@ -8,9 +8,9 @@
 #include <stdlib.h>
 
 
-/*Author: Roman Claprood
-Project: Minilab
-Due: 9/16/15
+/*Author: Roman Claprood and Eric Olson
+Project: Lab1
+Due: 10/02/15
 */
 
 void sendBack(int);
@@ -94,18 +94,20 @@ void parseAndSendResponse(int newsock,char request[]){
 	int correct =0;
 	int i =0;
 	char requestCopy[256];
-	char *strArray[10];
+	char *strArray[40];
 	//Copy of string, in case I need the original
 	strcpy((char *)requestCopy,(char *)request);
-	char *tokens = strtok(requestCopy, " \n \r");
+	char *tokens = strtok(requestCopy, " ,;\n\r");
 	//pares the message
 	while(tokens != NULL){
 		strArray[i] = malloc(strlen(tokens)+1);
 		strcpy(strArray[i],tokens);
 		printf("\n%s",strArray[i]);
 		i = i+1;
-		tokens = strtok(NULL, " \n\r");
+		tokens = strtok(NULL, " ,;\n\r");
 	}
+	
+	correct = strcmp(strArray[0],"GET");
 	if(correct != 0){
 		printf("Request type is not supported");
 	}
