@@ -104,24 +104,26 @@ void parseAndSendResponse(int newsock,char request[]){
 	//FILE *fname = "/index.html";
 	//Copy of string, in case I need the original
 	strcpy((char *)requestCopy,(char *)request);
-	char *tokens = strtok(requestCopy, " ,;\n\r");
+	char *tokens = strtok(requestCopy, " \n\r");
 	//pares the message
 	while(tokens != NULL){
 		strArray[i] = malloc(strlen(tokens)+1);
 		strcpy(strArray[i],tokens);
 		//printf("\n%s",strArray[i]);
 		i++;
-		tokens = strtok(NULL, " ,;\n\r");
+		tokens = strtok(NULL, " \n\r");
 	}
 	int numElements =i;
 	
 	i =0;
 	int check =0;
+	char fileName[50] =".";
 	while(i < numElements){		
 		if(strstr(strArray[i],".html") !=NULL || strstr(strArray[i],".jpg") !=NULL || strstr(strArray[i],".gif") !=NULL){
 			if(access("./kitten.jpg", F_OK ) != -1 && strcmp(strArray[i],"/kitten.jpg") ==0 ||
 			 access("./index.html", F_OK ) != -1  && strcmp(strArray[i],"/index.html") ==0)
 			{
+				strcat(fileName,strArray[i]);
     				strcat(responseHTTP," 200 OK");
 				check =1;
 			} else {
@@ -160,8 +162,15 @@ void parseAndSendResponse(int newsock,char request[]){
 	}
 	//strcat(responseHTTP,"\n");
 	strcat(responseHTTP,"\r\n");
-	nBytes = write(newsock,responseHTTP,100);
+	nBytes = write(newsock,responseHTTP,25);
 	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
-	printf("data should be here");
+	FILE *fname =fopen(fileName,"r");
+	char buffer[256];
+	int sent = fread(buffer,1,256,fname);
+	while(sent > 0){
+		write(newsock,buffer,sent);
+		sent = fread(buffer,1,256,fname);
+	}
+	
 }
