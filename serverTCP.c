@@ -172,5 +172,61 @@ void parseAndSendResponse(int newsock,char request[]){
 		write(newsock,buffer,sent);
 		sent = fread(buffer,1,256,fname);
 	}
+
+
+/*void respond(int sock, char* message) {
+	char* tokens[100];
+	char* s = " \r\n";
+	char* token = strtok(message, s);
+
+	int i;
+	for(i = 0; token != NULL; i++) {
+		tokens[i] = token;
+		token = strtok(NULL, s);
+	}
 	
-}
+	if(strcmp("GET",(char*)tokens[0]) == -1) {
+		char* errmess = "400 BAD REQUEST";
+		write(sock, errmess, strlen(errmess)+1); 
+	} else if (access(strcat(".",(char*)tokens[1]), F_OK) == -1) {
+		char* errmsg = "404 NOT FOUND";
+		write(sock, errmsg, strlen(errmsg)+1);
+	} else {
+		//get the date info
+		time_t t;
+		time(&t);
+		char* time = ctime(&t);
+		time = strtok(time, "\n");
+		//get the content type
+		char *fileInfo[2];
+		fileInfo[0] = strtok(tokens[1], ".");
+		fileInfo[1] = strtok(NULL, ".");
+		//get a pointer to the file
+		char fileName[50] = ".";
+		strcat(fileName, (char*)tokens[1]);
+		FILE* fname = fopen(fileName, "r");
+		//get the server's name
+		char hostname[128];
+		gethostname(hostname, sizeof(hostname));
+
+		//use strcat to make this one long string that we will use for the response
+		char* response = (char*)tokens[2]; strcat(response, " 200 OK\r\nDate: ");
+		strcat(response,time);
+		strcat(response, "\r\nContent-Type: ");
+		if (strcmp((char*)fileInfo[1], "html") == 0) {
+			strcat(response, "text/html");	
+		} else if (strcmp((char*)fileInfo[1], "jpeg") == 0) {
+			strcat(response, "image/jpeg");
+		} else if (strcmp((char*)fileInfo[1], "gif") == 0) {
+			strcat(response, "image/gif");
+		}
+		strcat(response, "\r\nServer: ");
+		strcat(response, hostname);
+		strcat(response, "\r\n\r\n");
+		//send the response message
+		write(sock, response, strlen(response)+1);
+		//Send the file
+		
+		fclose(fname);
+	}
+}*/
