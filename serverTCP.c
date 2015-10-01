@@ -121,7 +121,8 @@ void parseAndSendResponse(int newsock,char request[]){
 	while(i < numElements){		
 		if(strstr(strArray[i],".html") !=NULL || strstr(strArray[i],".jpg") !=NULL || strstr(strArray[i],".gif") !=NULL){
 			if(access("./kitten.jpg", F_OK ) != -1 && strcmp(strArray[i],"/kitten.jpg") ==0 ||
-			 access("./index.html", F_OK ) != -1  && strcmp(strArray[i],"/index.html") ==0)
+			 access("./index.html", F_OK ) != -1  && strcmp(strArray[i],"/index.html") ==0 ||
+			 access("./lizards.gif",F_OK) != -1 && strcmp(strArray[i],"/lizards.gif") ==0)
 			{
 				strcat(fileName,strArray[i]);
     				strcat(responseHTTP," 200 OK");
@@ -138,11 +139,12 @@ void parseAndSendResponse(int newsock,char request[]){
 	strcat(responseHTTP,"\r\n");
 	strcat(responseHTTP,"Date: ");
 	
-	//strcat(responseHTTP,"\r\n");
+	
 	time_t currentTime;
 	time(&currentTime);
 	char *time =ctime(&currentTime); //adds a newline
 	strcat(responseHTTP,time);
+	//strcat(responseHTTP,"\r\n");
 	i =0;
 	while(i < numElements){
 		if(strstr(strArray[i],".html") !=NULL){
@@ -153,7 +155,7 @@ void parseAndSendResponse(int newsock,char request[]){
 			strcat(responseHTTP,"Content-Type: image/jpeg");
 			strcat(responseHTTP,"\r\n");
 			break;
-		}else if(strstr(strArray[i], ".gif")){
+		}else if(strstr(strArray[i],".gif")){
 			strcat(responseHTTP,"Content-Type: image/gif");
 			strcat(responseHTTP,"\r\n");
 			break;	
@@ -165,14 +167,13 @@ void parseAndSendResponse(int newsock,char request[]){
 	nBytes = write(newsock,responseHTTP,strlen(responseHTTP));
 	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
-	FILE *fname =fopen(fileName,"r");
+	FILE *fname =fopen(fileName,"rb");
 	char buffer[256];
 	int sent = fread(buffer,1,256,fname);
 	while(sent > 0){
 		write(newsock,buffer,sent);
 		sent = fread(buffer,1,256,fname);
 	}
-
 }
 /*void respond(int sock, char* message) {
 	char* tokens[100];
