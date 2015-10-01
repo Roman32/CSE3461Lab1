@@ -76,9 +76,9 @@ int main (int argc, char *argv[])
 void sendBack(int newsock){
 
 	int nBytes = 0;
-	char message[1024];
-	bzero(message,1024);
-	nBytes = read(newsock,message,1023);
+	char message[512];
+	bzero(message,512);
+	nBytes = read(newsock,message,511);
    	if (nBytes < 0) 
 		printf("ERROR reading from socket");	
 	
@@ -97,9 +97,9 @@ void parseAndSendResponse(int newsock,char request[]){
 	int nBytes =0;
 	int correct =0;
 	int i =0;
-	char requestCopy[1024];
+	char requestCopy[512];
 	char *strArray[100];
-	char responseHTTP[5000] ="HTTP/1.1";
+	char responseHTTP[512] ="HTTP/1.1";
 	
 	//FILE *fname = "/index.html";
 	//Copy of string, in case I need the original
@@ -162,7 +162,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	}
 	//strcat(responseHTTP,"\n");
 	strcat(responseHTTP,"\r\n");
-	nBytes = write(newsock,responseHTTP,25);
+	nBytes = write(newsock,responseHTTP,1024);
 	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
 	FILE *fname =fopen(fileName,"r");
