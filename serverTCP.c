@@ -83,8 +83,10 @@ void sendBack(int newsock){
 		printf("ERROR reading from socket");	
 	
    	printf("\nHere is the message: %s\n",message);
+	//used to send message back to the client, from minilab and part A.
    	//nBytes = write(newsock,&message,1024);
 
+	//call to the other parts of the lab.
 	parseAndSendResponse(newsock,message);
 	
    	if (nBytes < 0) 
@@ -117,7 +119,11 @@ void parseAndSendResponse(int newsock,char request[]){
 	
 	i =0;
 	int check =0;
-	char fileName[50] =".";
+	char fileName[50] ="."; //used to add . infront of file, wasn't working without it
+
+	/*Checks the file the client is trying to GET. Checks to see if it has proper extension, then
+	Then checks that the file is accessable, and concatinates the proper message.
+	*/
 	while(i < numElements){		
 		if(strstr(strArray[i],".html") !=NULL || strstr(strArray[i],".jpg") !=NULL || strstr(strArray[i],".gif") !=NULL){
 			if(access("./kitten.jpg", F_OK ) != -1 && strcmp(strArray[i],"/kitten.jpg") ==0 ||
@@ -129,22 +135,28 @@ void parseAndSendResponse(int newsock,char request[]){
 				check =1;
 			} else {
    				strcat(responseHTTP," 404 Not Found");
+				write(newsock,"404 FILE NOT FOUND!\n",19);
 				check =1;
 			}
 		}		
 		i++;
 	}
-	if(check == 0)
+	//used if extension is not one of three from lab directions.
+	if(check == 0){
 		strcat(responseHTTP, " 404 Not Found");
+		write(newsock,"404 FILE NOT FOUND\n",19);
+	}
+
 	strcat(responseHTTP,"\r\n");
-	strcat(responseHTTP,"Date: ");
-	
-	
+	strcat(responseHTTP,"Date: ");	
+	//Grabs the current time, and appends to response
 	time_t currentTime;
 	time(&currentTime);
 	char *time =ctime(&currentTime); //adds a newline
 	strcat(responseHTTP,time);
 	//strcat(responseHTTP,"\r\n");
+
+	//Adds content type to response based on what the file is.
 	i =0;
 	while(i < numElements){
 		if(strstr(strArray[i],".html") !=NULL){
@@ -167,13 +179,16 @@ void parseAndSendResponse(int newsock,char request[]){
 	nBytes = write(newsock,responseHTTP,strlen(responseHTTP));
 	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
+	//Grab file qnd open it.
 	FILE *fname =fopen(fileName,"rb");
 	char buffer[256];
 	int sent = fread(buffer,1,256,fname);
+	//send file to the client
 	while(sent > 0){
 		write(newsock,buffer,sent);
 		sent = fread(buffer,1,256,fname);
 	}
+	fclose(fname);
 }
 /*void respond(int sock, char* message) {
 	char* tokens[100];
