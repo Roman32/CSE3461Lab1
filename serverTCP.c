@@ -76,9 +76,9 @@ int main (int argc, char *argv[])
 void sendBack(int newsock){
 
 	int nBytes = 0;
-	char message[512];
-	bzero(message,512);
-	nBytes = read(newsock,message,511);
+	char message[1024];
+	bzero(message,1024);
+	nBytes = read(newsock,message,1023);
    	if (nBytes < 0) 
 		printf("ERROR reading from socket");	
 	
@@ -97,9 +97,9 @@ void parseAndSendResponse(int newsock,char request[]){
 	int nBytes =0;
 	int correct =0;
 	int i =0;
-	char requestCopy[512];
+	char requestCopy[1024];
 	char *strArray[100];
-	char responseHTTP[512] ="HTTP/1.1";
+	char responseHTTP[5000] ="HTTP/1.1";
 	
 	//FILE *fname = "/index.html";
 	//Copy of string, in case I need the original
@@ -127,14 +127,14 @@ void parseAndSendResponse(int newsock,char request[]){
     				strcat(responseHTTP," 200 OK");
 				check =1;
 			} else {
-   				strcat(responseHTTP," 404 NOT FOUND");
+   				strcat(responseHTTP," 404 Not Found");
 				check =1;
 			}
 		}		
 		i++;
 	}
 	if(check == 0)
-		strcat(responseHTTP, " 404 NOT FOUND");
+		strcat(responseHTTP, " 404 Not Found");
 	strcat(responseHTTP,"\r\n");
 	strcat(responseHTTP,"Date: ");
 	
@@ -162,7 +162,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	}
 	//strcat(responseHTTP,"\n");
 	strcat(responseHTTP,"\r\n");
-	nBytes = write(newsock,responseHTTP,1024);
+	nBytes = write(newsock,responseHTTP,strlen(responseHTTP));
 	printf("The HTTP response is as follows \n");
 	printf("%s",responseHTTP);
 	FILE *fname =fopen(fileName,"r");
@@ -173,12 +173,11 @@ void parseAndSendResponse(int newsock,char request[]){
 		sent = fread(buffer,1,256,fname);
 	}
 
-
+}
 /*void respond(int sock, char* message) {
 	char* tokens[100];
 	char* s = " \r\n";
 	char* token = strtok(message, s);
-
 	int i;
 	for(i = 0; token != NULL; i++) {
 		tokens[i] = token;
@@ -208,7 +207,6 @@ void parseAndSendResponse(int newsock,char request[]){
 		//get the server's name
 		char hostname[128];
 		gethostname(hostname, sizeof(hostname));
-
 		//use strcat to make this one long string that we will use for the response
 		char* response = (char*)tokens[2]; strcat(response, " 200 OK\r\nDate: ");
 		strcat(response,time);
