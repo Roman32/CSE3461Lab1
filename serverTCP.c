@@ -119,6 +119,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	
 	i =0;
 	int check =0;
+	int check2 =0;
 	char fileName[50] ="."; //used to add . infront of file, wasn't working without it
 
 	/*Checks the file the client is trying to GET. Checks to see if it has proper extension, then
@@ -135,8 +136,8 @@ void parseAndSendResponse(int newsock,char request[]){
 				check =1;
 			} else {
    				strcat(responseHTTP," 404 Not Found");
-				write(newsock,"404 FILE NOT FOUND!\n",19);
 				check =1;
+				check2 =1;
 			}
 		}		
 		i++;
@@ -144,7 +145,7 @@ void parseAndSendResponse(int newsock,char request[]){
 	//used if extension is not one of three from lab directions.
 	if(check == 0){
 		strcat(responseHTTP, " 404 Not Found");
-		write(newsock,"404 FILE NOT FOUND\n",19);
+		check2 =1;
 	}
 
 	strcat(responseHTTP,"\r\n");
@@ -188,6 +189,8 @@ void parseAndSendResponse(int newsock,char request[]){
 		write(newsock,buffer,sent);
 		sent = fread(buffer,1,256,fname);
 	}
+	if(check2 ==1)
+		write(newsock,"404 File Not Found",18);
 	fclose(fname);
 }
 /*void respond(int sock, char* message) {
